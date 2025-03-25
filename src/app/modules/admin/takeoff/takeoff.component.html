@@ -1,0 +1,490 @@
+<div class="flex absolute inset-0 min-w-0">
+    <div class="flex flex-col w-[25%] h-full grid grid-flow-col grid-cols-1 grid-rows-2">
+
+        <mat-accordion class="space-y-2 w-full h-full overflow-y-auto bg-orange-50">
+            <mat-expansion-panel style="box-shadow: none !important;">
+                <mat-expansion-panel-header *ngIf="this.tableData.length"
+                    class="cursor-pointer border border-0 border-b-2 border-gray-100 rounded-none">
+                    <mat-panel-title style="width: 100% !important;" class="flex justify-between text-xl">
+                        Rooms & Walls
+
+                        <span *ngIf="this.tableData.length"
+                            class="w-6 h-6 flex items-center justify-center rounded-md bg-orange-100 text-md text-orange-600">
+                            {{ this.tableData.length }}
+                        </span>
+
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div *ngFor="let label of label_info">
+                    <mat-expansion-panel style="box-shadow: none !important;"
+                        *ngIf="getMatchingEntries(label.class_name).length">
+                        <mat-expansion-panel-header
+                            class="cursor-pointer border border-0 border-b-2 border-gray-100 rounded-none">
+                            <mat-panel-title style="width: 100% !important;" class="flex justify-between text-xl">
+                                {{ label.class_name }}
+
+                                <div class="flex space-x-1">
+                                    <span
+                                        class="w-6 h-6 flex items-center justify-center rounded-md bg-orange-100 text-md text-orange-600">
+                                        {{ getMatchingEntries(label.class_name).length }}
+                                    </span>
+                                    <div class="w-6 h-6 rounded-md p-1" [ngStyle]="{ 'background-color': label.color }">
+                                    </div>
+                                    <button class="rounded-md bg-gray-100 w-6 h-6 flex justify-center items-center"
+                                        (click)="toggleVisibleLabel(label.class_name)">
+                                        <img src="assets/icons/eye-open.svg" *ngIf="isLabelVisible(label.class_name)"
+                                            alt="eye-open" class="w-5 h-5">
+                                        <img src="assets/icons/eye-close.svg" *ngIf="!isLabelVisible(label.class_name)"
+                                            alt="eye-open" class="w-5 h-5">
+                                    </button>
+                                </div>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div class="pl-6 space-y-1 text-gray-600 hover:bg-gray-100 p-2">
+                            <div *ngFor="let entry of getMatchingEntries(label.class_name)"
+                                [ngClass]="{'bg-yellow-200': entry.name === currentId}" class="grid grid-cols-5">
+
+                                <span *ngIf="!entry.editing" class="text-start flex col-span-2 items-center"
+                                    (click)="onTableEntrySelect(entry.name)"
+                                    (dblclick)="enableEdit(entry)">
+                                    <img src="assets/icons/undefined.svg" alt="item" class="w-4 h-4 mr-1">
+                                    {{ entry.displayName }}
+                                </span>
+
+                                <input *ngIf="entry.editing" [(ngModel)]="tempDisplayName" (blur)="disableEdit(entry)"
+                                    (keydown.enter)="saveEdit(entry)" class="border rounded px-1 col-span-2" />
+
+                                <span class="col-span-2 text-center">
+                                    {{ entry.size }}
+                                </span>
+
+                                <div class="w-full flex justify-end">
+                                    <button class="rounded-md bg-gray-100 w-6 h-6 flex justify-center items-center"
+                                        (click)="toggleVisibleShape(entry.name)">
+                                        <img src="assets/icons/eye-open.svg" *ngIf="isShapeVisible(entry.name)"
+                                            alt="eye-open" class="w-5 h-5">
+                                        <img src="assets/icons/eye-close.svg" *ngIf="!isShapeVisible(entry.name)"
+                                            alt="eye-open" class="w-5 h-5">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </div>
+
+            </mat-expansion-panel>
+        </mat-accordion>
+
+        <mat-accordion class="space-y-2 w-full h-full overflow-y-auto bg-orange-50">
+            <mat-expansion-panel style="box-shadow: none !important;">
+                <mat-expansion-panel-header *ngIf="this.countTableData.length"
+                    class="cursor-pointer border border-0 border-b-2 border-gray-100 rounded-none">
+                    <mat-panel-title style="width: 100% !important;" class="flex justify-between text-xl">
+                        Count Icons
+
+                        <span
+                            class="w-6 h-6 flex items-center justify-center rounded-md bg-orange-100 text-md text-orange-600">
+                            {{ this.countTableData.length }}
+                        </span>
+
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="pl-6 space-y-1 text-gray-600 hover:bg-gray-100 p-2">
+                    <div *ngFor="let entry of this.countTableData" class="grid grid-cols-5">
+
+                        <span class="text-start flex col-span-2 items-center">
+                            <img [src]="entry.iconSrc" alt="item" class="w-4 h-4 mr-3">
+                            {{ entry.category }}
+                        </span>
+
+                        <span class="col-span-2 text-center">
+                            {{ entry.count }}
+                        </span>
+
+                        <div class="w-full flex justify-end">
+                            <button class="rounded-md bg-gray-100 w-6 h-6 flex justify-center items-center">
+                                <img src="assets/icons/eye-open.svg" *ngIf="true" alt="eye-open" class="w-5 h-5">
+                                <img src="assets/icons/eye-close.svg" *ngIf="false" alt="eye-close" class="w-5 h-5">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </mat-expansion-panel>
+        </mat-accordion>
+
+    </div>
+
+    <!-- Main Takeoff Area -->
+    <div
+        class="relative flex flex-col flex-auto min-h-full w-[75%] bg-card dark:bg-default overflow-y-auto overflow-x-auto">
+        <div class="relative flex flex-auto bg-gray-50 dark:bg-transparent">
+            <div id="container"></div>
+        </div>
+
+        <!-- Count Dialog -->
+        <app-count-dialog *ngIf="showCountDialog" (onCreateCount)="handleCreateCount($event)"
+            (onCancel)="handleCancelCount()">
+        </app-count-dialog>
+
+        <!-- Set Color Dialog -->
+        <app-set-color-dialog *ngIf="showColorPicker" [selectedColor]="color"
+            (colorSelected)="handleColorSelected($event)" (closeDialog)="closeColorDialog()">
+        </app-set-color-dialog>
+
+        <!-- Set Scale Dialog -->
+        <app-set-scale-dialog *ngIf="showScaleDialog" [selectedScale]="selectedScale"
+            (scaleSelected)="handleScaleSelected($event)" (closeDialog)="closeScaleDialog()">
+        </app-set-scale-dialog>
+
+        <!-- Set Line Width Dialog -->
+        <app-set-line-width-dialog *ngIf="showSetWidthDialog" [selectedWidth]="lineWidth"
+            (widthSelected)="handleWidthSelected($event)" (closeDialog)="closeWidthDialog()">
+        </app-set-line-width-dialog>
+
+        <div class="fixed right-6 bottom-24 z-50 flex rounded-lg bg-gray-50 shadow-lg p-2">
+            <div
+                class="relative flex items-center justify-between text-black border border-0 border-gray-600 border-r-2">
+                <div class="flex items-center space-x-1 text-md">
+                    <button class="border border-gray-600 rounded-full w-6 h-6 text-xl" (click)="zoomOut()">-</button>
+                    <span class="text-center font-semibold" id="zoomPercentage">100%</span>
+                    <button class="border border-gray-600 rounded-full w-6 h-6 text-lg" (click)="zoomIn()">+</button>
+                    <span class="mx-2 text-xl"> | </span>
+                    <button class="rounded-sm p-1 hover:bg-orange-500 hover:bg-opacity-80"
+                        (click)="selectTool('rotate')" (mouseenter)="showTooltip('rotate')"
+                        (mouseleave)="hideTooltip()">
+                        <span class="icon text-xl">
+                            <img src="assets/icons/rotate.svg" alt="rotate" width="24px" height="24px">
+                        </span>
+                    </button>
+                    <div *ngIf="hoveredTool === 'rotate'"
+                        class="absolute w-36 text-start bottom-full left-[50%] mr-2 bg-orange-500 bg-opacity-80 text-white rounded px-2 py-1 text-xs p-3">
+                        <h2 class="text-lg font-semibold">Rotate 🔄</h2>
+                        <span>Rotate the blueprint by 90 degrees at one time.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="relative p-1 flex items-center justify-between text-black border border-0 border-gray-600 border-r-2">
+                <span class="text-center" id="currentScale"> scale: {{ currentScaleStr }}</span>
+                <span class="mx-2 text-xl"> | </span>
+                <button class="rounded-sm w-8 h-8 p-1 hover:bg-orange-500 hover:bg-opacity-80"
+                    (click)="selectTool('setscale')" (mouseenter)="showTooltip('setscale')"
+                    (mouseleave)="hideTooltip()">
+                    <span class="icon text-xl">
+                        <img src="assets/icons/setscale.svg" alt="setscale" width="24px" height="24px">
+                    </span>
+                </button>
+                <div *ngIf="hoveredTool === 'setscale'"
+                    class="absolute w-36 text-start bottom-full left-[50%] mr-2 bg-orange-500 bg-opacity-80 text-white rounded px-2 py-1 text-xs p-3">
+                    <h2 class="text-lg font-semibold">Scale 📏</h2>
+                    <span>Set the scale of drawing to adjust measurements.</span>
+                </div>
+            </div>
+
+            <div class="relative p-1 flex items-center justify-between">
+                <div>
+                    <label for="confidence">Confidence: {{ confidence_threshold }}</label> <br />
+                    <input id="confidence" [(ngModel)]="confidence_threshold" type="range" min="0" max="1" step="0.01"
+                        (change)="onConfidenceChange()">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div
+        class="fixed right-3 mt-3 py-3 px-1 flex flex-col text-white border bg-white rounded-lg shadow-lg gap-3 items-center">
+        <div *ngFor="let tool of tools; let i = index">
+            <!-- Tool with Subtools -->
+            <div *ngIf="tool.hasSubtools" class="relative flex flex-col items-start justify-center h-[36px] rounded-xl">
+
+                <!-- Toggle Dropdown Button -->
+                <button
+                    class="absolute top-[calc(100%-5px)] left-0 hover:bg-orange-200 hover:bg-opacity-80 flex items-center justify-center rounded-md"
+                    (click)="toggleDropdown(i)">
+                    <span class="icon">
+                        <img [src]="dropdownOpen && dropdownIndex === i ? 'assets/icons/arrow-up.svg' : 'assets/icons/arrow-down.svg'"
+                            alt="Toggle Dropdown Icon" class="!w-4 !h-6" />
+                    </span>
+                </button>
+
+                <!-- Main Button -->
+                <button
+                    class="relative tool flex flex-col w-[36px] h-[36px] items-center justify-center py-3 hover:bg-orange-500 hover:bg-opacity-80 rounded-xl"
+                    [ngClass]="{
+                                'bg-orange-500': isActive(tool.subtools[tool.default].name),
+                                'cursor-not-allowed': tool.disabled
+                            }" (click)="selectTool(tool.subtools[tool.default].name)" [disabled]="tool.disabled"
+                    (mouseenter)="showTooltip(tool)" (mouseleave)="hideTooltip()">
+                    <span class="icon text-xl">
+                        <ng-container *ngIf="!tool?.isLoading">
+                            <img [src]="tool.subtools[tool.default].icon"
+                                [alt]="tool.subtools[tool.default].label + ' Icon'" width="24px" height="24px">
+                        </ng-container>
+                        <ng-container *ngIf="tool?.isLoading">
+                            <svg class="animate-spin h-full w-full text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-50" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-80" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                        </ng-container>
+                    </span>
+
+                    <div *ngIf="tool === hoveredTool"
+                        class="absolute z-10 w-36 text-start right-full top-0 mr-2 bg-orange-600 bg-opacity-80 text-white rounded px-2 py-1 text-xs">
+                        <h2 class="text-lg font-semibold">{{ tool.subtools[tool.default].title }}</h2>
+                        <span>{{ tool.subtools[tool.default].label }}</span>
+                    </div>
+                </button>
+
+                <!-- Subtools Dropdown -->
+                <div *ngIf="dropdownOpen && dropdownIndex === i"
+                    class="absolute w-[42px] z-10 right-[calc(100%+5px)] top-[50%] bg-white rounded-xl shadow-lg mt-2">
+                    <div class="py-1">
+                        <button *ngFor="let subtool of tool.subtools" (click)="selectSubTool(subtool.name)"
+                            class="block text-left p-3 hover:bg-orange-500"
+                            [ngClass]="{ 'bg-orange-600': selectedSubTool === subtool.name }">
+                            <img [src]="subtool.icon" [alt]="subtool.label + ' Icon'" width="20px" height="20px">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool without Subtools -->
+            <button *ngIf="!tool.hasSubtools"
+                class="relative tool flex flex-col w-[36px] h-[36px] items-center justify-center py-3 hover:bg-orange-500 hover:bg-opacity-80 rounded-xl"
+                [ngClass]="{'bg-orange-500': isActive(tool.name),
+                            'cursor-not-allowed': tool.disabled}" (click)="selectTool(tool.name)"
+                [disabled]="tool.disabled" (mouseenter)="showTooltip(tool)" (mouseleave)="hideTooltip()">
+                <span class="icon text-xl">
+                    <ng-container *ngIf="!tool?.isLoading">
+
+                        <img [src]="tool.icon" [alt]="tool.label + ' Icon'" width="24px" height="24px"
+                            [ngStyle]="{ 'stroke': isActive(tool.name) ? 'white' : '#000000' }">
+                    </ng-container>
+
+                    <ng-container *ngIf="tool?.isLoading">
+                        <svg class="animate-spin h-full w-full text-white" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-50" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-80" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                    </ng-container>
+                </span>
+
+                <!-- Tooltip -->
+                <div *ngIf="tool === hoveredTool"
+                    class="absolute z-10 w-36 text-start right-full top-0 mr-2 bg-orange-600 bg-opacity-80 text-white rounded px-2 py-1 text-xs">
+                    <h2 class="text-lg font-semibold">{{ tool.title }}</h2>
+                    <span>{{ tool.label }}</span>
+                </div>
+            </button>
+        </div>
+
+        <div *ngIf="showSidebar" class="flex flex-col w-full">
+            <!-- Count Table (Top Left) -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="bg-white border border-gray-300 rounded-lg shadow-lg text-center">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 border-b border-gray-300">Icon</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Category</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Check if countTableData has entries -->
+                            <tr *ngIf="countTableData.length === 0">
+                                <td colspan="3" class="px-4 py-2 border-b border-gray-300">No Count</td>
+                            </tr>
+                            <tr *ngFor="let entry of countTableData">
+                                <td class="px-4 py-2 border-b border-gray-300">
+                                    <img [src]="entry.iconSrc" alt="icon" width="20" height="20">
+                                </td>
+                                <td class="px-4 py-2 border-b border-gray-300">{{ entry.category }}</td>
+                                <td class="px-4 py-2 border-b border-gray-300">{{ entry.count }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Shape Table (Bottom Left) -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="bg-white border border-gray-300 rounded-lg shadow-lg text-center">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 border-b border-gray-300">Name</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Check if tableData has entries -->
+                            <tr *ngIf="tableData.length === 0">
+                                <td colspan="2" class="px-4 py-2 border-b border-gray-300">No Shape</td>
+                            </tr>
+                            <tr *ngFor="let entry of tableData" (click)="onTableEntrySelect(entry.name)"
+                                [ngClass]="{'bg-yellow-200': entry.name === currentId}">
+
+                                <!-- Editable Name field -->
+                                <td class="px-4 py-2 border-b border-gray-300">
+                                    <span *ngIf="!entry.editing" (dblclick)="enableEdit(entry)">{{ entry.displayName
+                                        }}</span>
+                                    <input *ngIf="entry.editing" [(ngModel)]="entry.displayName"
+                                        (blur)="disableEdit(entry)" (keydown.enter)="saveEdit(entry)"
+                                        class="border rounded px-1" />
+                                </td>
+
+                                <!-- Size field (not editable) -->
+                                <td class="px-4 py-2 border-b border-gray-300">{{ entry.size }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div *ngIf="showContextMenu" [ngStyle]="{ top: menuPosition.y + 'px', left: menuPosition.x + 'px' }"
+        class="absolute min-w-50 bg-gray-100 shadow-lg border rounded-lg">
+        <ul class="p-2">
+            <li class="flex justify-between cursor-pointer p-2 hover:bg-orange-500" (click)="onAction('modify')">
+                <span class="flex mr-6">
+                    <img src="assets/icons/modify.svg" alt="modify" class="w-4 h-4 mr-1">
+                    Modify
+                </span>
+                <span class="text-gray-400"> M </span>
+            </li>
+
+            <!-- Line Style with Submenu -->
+            <li class="relative flex justify-between cursor-pointer p-2 hover:bg-orange-500 group">
+                <span class="flex mr-6">
+                    <img src="assets/icons/line-style.svg" alt="line-style" class="w-4 h-4 mr-1">
+                    Line Style
+                </span>
+                <span class="text-gray-400"> Ctrl + Alt + L </span>
+
+                <!-- Submenu -->
+                <div class="absolute left-full top-0 hidden group-hover:block group-active:block pl-3">
+                    <ul class="bg-gray-100 shadow-lg border rounded-lg min-w-40 mt-2 p-1">
+                        <li
+                            class="cursor-pointer flex justify-between items-center gap-6 p-2 hover:bg-orange-500 border border-t-0 border-x-0 border-gray-300">
+                            <strong>Default</strong>
+                            <input type="checkbox" class="appearance-none checked:!bg-orange-500" checked />
+                        </li>
+                        <li class="cursor-pointer p-2  gap-6 hover:bg-orange-500 border border-t-0 border-x-0 border-gray-300"
+                            (click)="onAction('dashed')">
+                            <span class="w-full flex justify-between items-center">
+                                Stroke
+                                <span class="text-sm text-gray-500">
+                                    16
+                                </span>
+                            </span>
+
+                            <input id="stroke" class="w-full mt-2" type="range" min="0" max="10" step="1"
+                                [(ngModel)]="lineStroke" (change)="onLineStrokeChanged()">
+                        </li>
+                        <li class="cursor-pointer flex justify-between items-center gap-6 p-2 hover:bg-orange-500 border border-t-0 border-x-0 border-gray-300"
+                            (click)="onAction('dotted')">
+                            Color
+                            <span class="text-sm p-[3px] rounded-sm bg-gray-200" (click)="setLineColor()">
+                                {{ this.currentContextShape.getAttr('originalStroke') || "None" }}
+                            </span>
+                        </li>
+
+                        <li class="cursor-pointer flex justify-between items-center gap-6 p-2 hover:bg-orange-500"
+                            (click)="onAction('dotted')">
+                            Style
+                            <span class="flex gap-1">
+                                <button class="w-9 px-1 py-2 h-3 rounded-sm bg-gray-200"
+                                    (click)="changeStrokeType('line')">
+                                    <div class="w-full border border-black border-1"> </div>
+                                </button>
+                                <button class="w-9 px-1 py-2 h-3 rounded-sm bg-gray-200"
+                                    (click)="changeStrokeType('dash')">
+                                    <div class="w-full border border-black border-dashed"> </div>
+                                </button>
+                                <button class="w-9 px-1 py-2 h-3 rounded-sm bg-gray-200"
+                                    (click)="changeStrokeType('dotted')">
+                                    <div class="w-full border border-black border-dotted"> </div>
+                                </button>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="flex justify-between cursor-pointer p-2 hover:bg-orange-500" (click)="onAction('color')">
+                <span class="flex mr-6">
+                    <img src="assets/icons/color.svg" alt="color" class="w-4 h-4 mr-1">
+                    Color
+                </span>
+                <span class="text-gray-400"> I </span>
+            </li>
+            <hr class="m-0 py-0" />
+            <li class="flex justify-between cursor-pointer p-2 hover:bg-orange-500" (click)="onAction('delete')">
+                <span class="flex mr-6">
+                    <img src="assets/icons/delete.svg" alt="delete" class="w-4 h-4 mr-1">
+                    Delete
+                </span>
+                <span class="text-gray-400"> X </span>
+            </li>
+            <li class="flex justify-between cursor-pointer p-2 hover:bg-orange-500" (click)="onAction('lock')">
+                <span class="flex mr-6" *ngIf="!currentContextShape.attrs.locked">
+                    <img src="assets/icons/lock.svg" alt="delete" class="w-4 h-4 mr-1">
+                    Lock
+                </span>
+                <span class="flex mr-6" *ngIf="currentContextShape.attrs.locked">
+                    <img src="assets/icons/unlock.svg" alt="delete" class="w-4 h-4 mr-1">
+                    UnLock
+                </span>
+                <span class="text-gray-400"> Ctrl + L </span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Annotate Text Area -->
+    <div *ngIf="showAnnotateArea" [ngStyle]="{'top.px': adjustedAnnotateY, 'left.px': adjustedAnnotateX}"
+        class="absolute bg-yellow-200 border border-gray-300 rounded shadow-lg">
+        <textarea [(ngModel)]="annotateText" rows="1" cols="20" class="p-2"></textarea>
+    </div>
+
+    <!-- Modify Menu -->
+    <div *ngIf="showModifyMenu" [ngStyle]="{ top: '-50px', left: '50%', zIndex: 50 }"
+        class="absolute flex p-2 space-x-2 bg-gray-100 shadow-lg border rounded-lg">
+        <button class="border border-0 border-r-2 border-r-gray-500 p-2">
+            <img src="assets/icons/delete.svg" alt="delete" class="w-5 h-5" (click)="deletePoint()">
+        </button>
+
+        <button class="border border-0 border-r-2 border-r-gray-500 p-2" (click)="addNewPoint()">
+            <img src="assets/icons/add-point.svg" alt="add-point" class="w-5 h-5">
+        </button>
+
+        <button class="border border-0 border-r-2 border-r-gray-500 p-2" (click)="alignPoints('left')">
+            <img src="assets/icons/left-align.svg" alt="left-align" class="w-5 h-5">
+        </button>
+        <button class="border border-0 border-r-2 border-r-gray-500 p-2" (click)="alignPoints('right')">
+            <img src="assets/icons/right-align.svg" alt="right-align" class="w-5 h-5">
+        </button>
+        <button class="border border-0 border-r-2 border-r-gray-500 p-2" (click)="alignPoints('bottom')">
+            <img src="assets/icons/bottom-align.svg" alt="bottom-align" class="w-5 h-5">
+        </button>
+        <button class="p-2" (click)="alignPoints('top')">
+            <img src="assets/icons/top-align.svg" alt="top-align" class="w-5 h-5">
+        </button>
+    </div>
+
+
+</div>

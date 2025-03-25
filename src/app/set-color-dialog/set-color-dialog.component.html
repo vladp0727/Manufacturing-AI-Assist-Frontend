@@ -1,0 +1,30 @@
+<div class="fixed inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+      <h1 class="text-2xl font-semibold">Set Color</h1>
+      <div>
+        <label>Choose Color</label>
+        <div class="relative">
+          <div class="w-full h-5 border rounded-md cursor-pointer" (click)="toggleColorPicker()" [style.background-color]="color">
+          </div>
+          <!-- Color Grid Dropdown -->
+          <div *ngIf="showColorGrid" class="absolute z-99 mt-2 bg-white border border-gray-300 rounded-md shadow-lg p-2 overflow-y-auto max-h-64 w-40">
+            <div class="grid grid-cols-8 gap-1">
+              <div *ngFor="let c of colors" class="w-4 h-4 cursor-pointer border border-gray-200" [style.background-color]="c" (click)="selectColor(c)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <label for="opacity">Opacity: {{ opacity }}</label>
+        <input id="opacity" [(ngModel)]="opacity" type="range" min="0" max="1" step="0.01" />
+      </div>
+      
+      <div class="mt-4">
+        <button mat-button (click)="cancel()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="applyColor()">Apply</button>
+      </div>
+    </div>
+  </div>
+  

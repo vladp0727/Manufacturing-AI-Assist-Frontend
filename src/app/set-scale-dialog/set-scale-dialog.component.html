@@ -1,0 +1,36 @@
+<!-- set-scale-dialog.component.html -->
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <mat-tab-group>
+            <mat-tab label="Imperial Unit Scales">
+                <div class="mt-4">
+                    <!-- <h1>{{ selectedScale }}</h1> -->
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-select placeholder="Select Scale" [(ngModel)]="selectedScale">
+                            <mat-option *ngFor="let scale of imperialScales" [value]="scale.scale">
+                                {{ scale.str }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+            <mat-tab label="Metric Scales">
+                <div class="mt-4">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-select placeholder="Select Scale" [(ngModel)]="selectedScale">
+                            <mat-option *ngFor="let scale of metricScales" [value]="scale">
+                                {{ scale.str }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+        <div class="flex justify-between mt-4">
+            <button mat-button class="bg-black text-white py-2 px-4 rounded hover:bg-gray-600"
+                (click)="onCancel()">Cancel</button>
+            <button mat-button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                (click)="onAddScale()">Set Scale</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,155 @@
+<div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-[400px]">
+    <h2 class="text-xl font-semibold text-center mb-6">Create New Item Count</h2>
+
+    <div class="space-y-4">
+      <!-- Count Group Name Input -->
+      <div>
+        <label for="countGroupName" class="block text-sm font-medium text-gray-700">Count Group Name:</label>
+        <input id="countGroupName" [(ngModel)]="countGroupName" placeholder="eg Tiles 400mm Outdoor"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+        <div *ngIf="countGroupNameError" class="text-red-500 text-sm mt-1">
+          Count Group Name is required.
+        </div>
+      </div>
+
+      <!-- Category Input -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700">Category:</label>
+        <input id="category" [(ngModel)]="category" placeholder="eg Flooring"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+        <div *ngIf="categoryError" class="text-red-500 text-sm mt-1">
+          Category is required.
+        </div>
+      </div>
+
+      <!-- Colour Picker and Icon Selection -->
+      <div class="flex space-x-4 relative">
+        <div class="flex-1 mt-10">
+          <label for="color" class="block text-sm font-medium text-gray-700">Line Colour and Size:</label>
+          <div class="flex gap-x-1">
+            <div class="relative">
+              <div class="w-8 h-8 border rounded cursor-pointer" (click)="toggleColorPicker()"
+                [style.background-color]="selectedColor">
+              </div>
+              <!-- Color Grid Dropdown -->
+              <div *ngIf="showColorGrid"
+                class="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg p-2 overflow-y-auto max-h-64 w-40">
+                <div class="grid grid-cols-8 gap-1">
+                  <div *ngFor="let color of colors" class="w-4 h-4 cursor-pointer border border-gray-200"
+                    [style.background-color]="color" (click)="selectColor(color)">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Line Size Dropdown -->
+            <div>
+              <select id="lineSize" [(ngModel)]="lineSize"
+                class="block w-28 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <option value="Thin">Thin</option>
+                <option value="Medium">Medium</option>
+                <option value="Thick">Thick</option>
+                <option value="Very Thick">Very Thick</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 mt-10">
+          <label for="icon" class="block text-sm font-medium text-gray-700">Count Symbol and Size:</label>
+          <div class="flex gap-x-1 relative">
+            <div class="relative">
+              <button (click)="toggleIconDropdown()"
+                class="flex items-center justify-center w-8 h-8 border rounded-md focus:outline-none">
+                <svg *ngIf="icon === 'checkmark'" class="w-5 h-5" [style.fill]="selectedColor"
+                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M20.285 6.708l-11.285 11.292-5.285-5.292 1.415-1.415 3.87 3.877 9.878-9.962z" />
+                </svg>
+                <svg *ngIf="icon === 'circle'" class="w-5 h-5" [style.stroke]="selectedColor" fill="none"
+                  stroke-width="2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" />
+                </svg>
+                <svg *ngIf="icon === 'upward'" class="w-5 h-5" [style.fill]="selectedColor"
+                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
+                  <path
+                    d="M0,486.944l245-148.887l245,148.887L245,3.056L0,486.944z M245,302.337L75.554,405.307L245,70.65l169.446,334.657 L245,302.337z" />
+                </svg>
+                <svg *ngIf="icon === 'square'" class="w-5 h-5" [style.stroke]="selectedColor" fill="none"
+                  stroke-width="2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <rect x="6" y="6" width="12" height="12" />
+                </svg>
+                <svg *ngIf="icon === 'triangle'" class="w-5 h-5" [style.stroke]="selectedColor" fill="none"
+                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 2l9 16h-18z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <!-- Icon Dropdown -->
+              <div *ngIf="showIconDropdown"
+                class="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <ul class="py-1">
+                  <li (click)="selectIcon('checkmark')"
+                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                    <svg class="w-5 h-5" [style.fill]="selectedColor" xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24">
+                      <path d="M20.285 6.708l-11.285 11.292-5.285-5.292 1.415-1.415 3.87 3.877 9.878-9.962z" />
+                    </svg>
+                  </li>
+                  <li (click)="selectIcon('circle')"
+                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                    <svg class="w-5 h-5" [style.stroke]="selectedColor" fill="none" stroke-width="2"
+                      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="9" />
+                    </svg>
+                  </li>
+                  <li (click)="selectIcon('upward')"
+                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                    <svg class="w-5 h-5" [style.fill]="selectedColor" xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 490 490">
+                      <path
+                        d="M0,486.944l245-148.887l245,148.887L245,3.056L0,486.944z M245,302.337L75.554,405.307L245,70.65l169.446,334.657 L245,302.337z" />
+                    </svg>
+                  </li>
+                  <li (click)="selectIcon('square')"
+                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                    <svg class="w-5 h-5" [style.stroke]="selectedColor" fill="none" stroke-width="2"
+                      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <rect x="6" y="6" width="12" height="12" />
+                    </svg>
+                  </li>
+                  <li (click)="selectIcon('triangle')"
+                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                    <svg class="w-5 h-5" [style.stroke]="selectedColor" fill="none" xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24">
+                      <path d="M12 2l9 16h-18z" />
+                    </svg>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <select id="symbolSize" [(ngModel)]="symbolSize"
+              class="block w-28 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <option value="Small">Small</option>
+              <option value="Medium">Medium</option>
+              <option value="Big">Big</option>
+              <!-- <option value="Very Thick">Very Thick</option> -->
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog Actions -->
+    <div class="mt-18 flex justify-between">
+      <button
+        class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        (click)="onCancel.emit()">Cancel</button>
+      <button
+        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        (click)="createCount()">Create Count</button>
+    </div>
+  </div>
+</div>
